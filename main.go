@@ -7,11 +7,16 @@ import (
 	"fmt"
 	"log"
 	// "net/http"
-
-	// "net/http"
 	// _ "github.com/go-sql-driver/mysql"
 	_ "github.com/denisenkom/go-mssqldb"
 )
+
+type User struct {
+   FirstName      string
+   LastName      string
+   Address   string
+   City       string
+  }
 
 type Service struct {
    database *sql.DB
@@ -39,6 +44,7 @@ func main() {
 	fmt.Println("Docker SQL Connected!")
 
    getData();
+   // insertData();
    
 }
 
@@ -80,17 +86,23 @@ func updateData() {
    log.Printf("affected = %d \n", rowCount)
 }
 
-func (s *Service) insertData(u User) {
+func (s *Service) insertData(u User) error{
    //INSERT DATA
-   res, err := DB.Exec("INSERT INTO Persons(FirstName, LastName, Address, City) VALUES('Harrith', 'Hasmadi', 'Kempadang', 'Penang')")
+   _, err := DB.Exec(`INSERT INTO Persons(FirstName, LastName, Address, City) VALUES(?, ?, ?, ?)`, 
+   u.FirstName,
+   u.LastName,
+   u.Address,
+   u.City)
    if err != nil {
       log.Fatal(err)
    }
-   rowCnt, err := res.RowsAffected()
-   if err != nil {
-      log.Fatal(err)
-   }
-   log.Printf("affected = %d\n", rowCnt)
+   // rowCnt, err := res.RowsAffected()
+   // if err != nil {
+   //    log.Fatal(err)
+   // }
+   // log.Printf("affected = %d\n", rowCnt)
+
+   return nil
 }
 
 func delData() {
