@@ -44,7 +44,7 @@ func main() {
 	fmt.Println("Docker SQL Connected!")
 
    getData();
-   // insertData();
+   insertData();
    
 }
 
@@ -86,23 +86,17 @@ func updateData() {
    log.Printf("affected = %d \n", rowCount)
 }
 
-func (s *Service) insertData(u User) error{
+func insertData() {
    //INSERT DATA
-   _, err := DB.Exec(`INSERT INTO Persons(FirstName, LastName, Address, City) VALUES(?, ?, ?, ?)`, 
-   u.FirstName,
-   u.LastName,
-   u.Address,
-   u.City)
+   res, err := DB.Exec("INSERT INTO Persons(FirstName, LastName, Address, City) VALUES('FAtihah', 'kamal', 'SEMENYIH', 'SELANGOR')")
    if err != nil {
       log.Fatal(err)
    }
-   // rowCnt, err := res.RowsAffected()
-   // if err != nil {
-   //    log.Fatal(err)
-   // }
-   // log.Printf("affected = %d\n", rowCnt)
-
-   return nil
+   rowCnt, err := res.RowsAffected()
+   if err != nil {
+      log.Fatal(err)
+   }
+   log.Printf("affected = %d\n", rowCnt)
 }
 
 func delData() {
