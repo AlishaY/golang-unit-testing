@@ -1,17 +1,19 @@
 package main
 
 import (
-    // "fmt"
+	// "fmt"
 	"database/sql"
-	"testing"
+	"fmt"
 	"log"
 	"os"
-    // "time"
+	"testing"
+
+	// "time"
 	_ "github.com/denisenkom/go-mssqldb"
-    // r "github.com/moemoe89/go-unit-test-sql/repository"
-    // "github.com/google/uuid"
-    "github.com/DATA-DOG/go-sqlmock"
-    // "github.com/stretchr/testify/assert"
+	// r "github.com/moemoe89/go-unit-test-sql/repository"
+	// "github.com/google/uuid"
+	"github.com/DATA-DOG/go-sqlmock"
+	// "github.com/stretchr/testify/assert"
 )
 
 const (
@@ -37,15 +39,20 @@ func TestMain(m *testing.M) {
 }
 
 func TestInsertData(t *testing.T) {
+    fmt.Println("error here")
 	DB, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
     if err != nil {
         log.Fatal("error init mock", err)
     }
     defer DB.Close()
 
+    fmt.Println("error here 1")
+
     svc := Service{
         database: DB,
     }
+
+    fmt.Println("error here 2")
 
     userSuccess := User{
         FirstName: "Fadhi",
@@ -54,14 +61,25 @@ func TestInsertData(t *testing.T) {
         City: "Selangor",
     }
 
+    fmt.Println("error here 3")
+
     mock.ExpectExec(`INSERT INTO Persons(FirstName, LastName, Address, City) VALUES(?, ?, ?, ?)`).WithArgs(userSuccess.FirstName, userSuccess.LastName, userSuccess.Address, userSuccess.City).
     WillReturnResult(sqlmock.NewResult(1,1))
+    fmt.Println("error here 4")
+    fmt.Println(userSuccess,svc)
     err = svc.insertData(userSuccess)
+
+    
 
     if err != nil {
         t.Errorf("user success, got  err %v", err)
+        fmt.Println("error here 5")
     }
 }
+
+// func TestGetData(t *testing.T) {
+
+// }
 
 // func TestAdd(t *testing.T){
 

@@ -21,74 +21,95 @@ type User struct {
 type Service struct {
    database *sql.DB
   }
-var DB *sql.DB
+// var DB *sql.DB
 var err error
 
-func main() {
-   // fmt.Println("Listening on port 3000")
-   // http.ListenAndServe(":3000", nil)
-
-	DB, err = sql.Open(
+func initDB() (*sql.DB, error) {
+   db, err := sql.Open(
 		"sqlserver",
 		"sqlserver://sa:MyPass@word@127.0.0.1:1439?database=MyDatabase&connection+timeout=30",
 	)
+   if err != nil {
+    return db, err
+   }
+  
+   return db, nil
+  }
 
-	if err != nil {
-		log.Fatal(err)
-	}
+func main() {
 
-	pingErr := DB.Ping()
-	if pingErr != nil {
-		log.Fatal(pingErr)
-	}
-	fmt.Println("Docker SQL Connected!")
+	db, err := initDB()
+   if err != nil {
+   log.Fatal(err)
+   }
 
-   getData();
+   svc := &Service{
+   database: db,
+   }
+
+   fmt.Println("connected",svc)
+
+   // getData();
    // insertData();
    
 }
 
-func getData() {
-   var fname string
-   var lname string
+// func getData() {
+//    var fname string
+//    var lname string
 
-   rows, err := DB.Query("SELECT FirstName, LastName FROM Persons", 1)
-   if err != nil {
-      log.Fatal(err)
-   }
-   defer rows.Close()
+//    rows, err := DB.Query("SELECT FirstName, LastName FROM Persons", 1)
+//    if err != nil {
+//       log.Fatal(err)
+//    }
+//    defer rows.Close()
 
-   for rows.Next() {
-      err := rows.Scan(&fname, &lname)
-      if err != nil {
-         log.Fatal(err)
-      }
-      fmt.Printf("the name: %s %s \n", fname, lname)
-   }
-   err = rows.Err()
-   if err != nil {
-      log.Fatal(err)
-   }
+//    for rows.Next() {
+//       err := rows.Scan(&fname, &lname)
+//       if err != nil {
+//          log.Fatal(err)
+//       }
+//       fmt.Printf("the name: %s %s \n", fname, lname)
+//    }
+//    err = rows.Err()
+//    if err != nil {
+//       log.Fatal(err)
+//    }
 
-   return 
-}
+//    return 
+// }
 
-func updateData() {
-   //UPDATE DATA
-   res, err := DB.Exec("UPDATE Persons SET PersonID=5 WHERE PersonID IS NULL")
-   if err != nil {
-      log.Fatal(err)
-   }
-   rowCount, err := res.RowsAffected()
-   if err != nil {
-      log.Fatal()
-   }
-   log.Printf("affected = %d \n", rowCount)
-}
+// func (s *Service) getData(id int) ([]User, error) {
+//    var users []User
+   
+//    res, rr:= DB.Query(`SELECT FirstName, LastName FROM Persons`, id)
+
+//    if err != nil {
+//       return users, err
+//    }
+
+//    for res.Next() {
+//       var u User
+//       err := res.Scan(&u.FirstName, &u.LastName, u.)
+//    }
+// }
+
+// func updateData() {
+//    //UPDATE DATA
+//    res, err := DB.Exec("UPDATE Persons SET PersonID=5 WHERE PersonID IS NULL")
+//    if err != nil {
+//       log.Fatal(err)
+//    }
+//    rowCount, err := res.RowsAffected()
+//    if err != nil {
+//       log.Fatal()
+//    }
+//    log.Printf("affected = %d \n", rowCount)
+// }
 
 func (s *Service) insertData(u User) error{
    //INSERT DATA
-   _, err := DB.Exec(`INSERT INTO Persons(FirstName, LastName, Address, City) VALUES(?, ?, ?, ?)`, 
+   _, err := s.database.Exec(`INSERT INTO Persons(FirstName, LastName, Address, City) VALUES(?, ?, ?, ?)`, 
    u.FirstName,
    u.LastName,
    u.Address,
@@ -105,19 +126,19 @@ func (s *Service) insertData(u User) error{
    return nil
 }
 
-func delData() {
-   //DELETE DATA
-   res, err := DB.Exec("DELETE FROM Persons WHERE PersonID=5")
-   if err != nil {
-      log.Fatal(err)
-   }
-   rowCnt, err := res.RowsAffected()
-   if err != nil {
-      log.Fatal(err)
-   }
-   log.Printf("affected = %d\n", rowCnt)
-}
+// func delData() {
+//    //DELETE DATA
+//    res, err := DB.Exec("DELETE FROM Persons WHERE PersonID=5")
+//    if err != nil {
+//       log.Fatal(err)
+//    }
+//    rowCnt, err := res.RowsAffected()
+//    if err != nil {
+//       log.Fatal(err)
+//    }
+//    log.Printf("affected = %d\n", rowCnt)
+// }
 
-func Add(x, y int) (res int) {
-	return x + y
-}
+// func Add(x, y int) (res int) {
+// 	return x + y
+// }
